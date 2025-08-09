@@ -47,7 +47,7 @@ jobs:
           PROFILE_PATH: profiles/caleb.yaml
         run: |
           python -V
-          python pipeline/build_daily.py
+          python pipeline/build_episode.py profiles/caleb.yaml
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
