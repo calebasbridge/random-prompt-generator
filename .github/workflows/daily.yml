@@ -29,14 +29,19 @@ jobs:
       - name: Install ffmpeg
         run: sudo apt-get update && sudo apt-get install -y ffmpeg
 
-      - name: Build site with placeholder episode
+      -       - name: Install dependencies
+        run: pip install requests
+
+      - name: Build site with ElevenLabs smoke test
         env:
           PODCAST_TITLE: "Random Prompt Generator"
           PODCAST_TAGLINE: "Where justice meets the machine."
           SITE_BASE_URL: ${{ secrets.SITE_BASE_URL }}
+          ELEVENLABS_API_KEY: ${{ secrets.ELEVENLABS_API_KEY }}
+          ELEVENLABS_VOICE_IDS: ${{ secrets.ELEVENLABS_VOICE_IDS }}
         run: |
           python -V
-          python pipeline/hello_build.py
+          python pipeline/tts_smoketest.py
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
