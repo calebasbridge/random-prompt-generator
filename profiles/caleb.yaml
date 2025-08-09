@@ -1,0 +1,68 @@
+name: caleb
+target_runtime_minutes:
+  min: 13
+  max: 20
+
+include_topics:
+  - corrections
+  - prisons
+  - jails
+  - probation
+  - parole
+  - public safety
+  - risk assessment
+  - evaluation
+  - benchmarks
+  - retrieval
+  - RAG
+  - sensitive data
+  - document AI
+  - speech-to-text
+  - agents
+  - governance
+  - compliance
+  - privacy
+  - PII
+  - red teaming
+  - safety
+  - explainability
+  - audit
+  - monitoring
+  - deployment
+  - policy
+
+conditional_includes:
+  - robotics
+  - computer vision
+  - forensics
+  - contraband detection
+  - facility safety
+  - surveillance auditing
+  - body-worn cameras
+
+exclude_topics:
+  - pure theory
+  - proofs
+  - satellite imagery
+  - bioinformatics
+  - chemistry-only
+  - astrophysics
+  - synthetic biology
+
+boost_authors:
+  - Ethan Mollick
+  - Conor Grennan
+
+boost_orgs:
+  - Allen Institute for AI
+  - Center for AI Safety
+  - GovAI
+  - Stanford HAI
+  - NIJ
+  - OJP
+  - RAND
+  - NIST
+
+max_papers_per_episode: 12
+max_queue_per_day: 30
+voice_rotation: per-paper
