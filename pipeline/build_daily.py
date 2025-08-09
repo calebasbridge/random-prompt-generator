@@ -31,7 +31,6 @@ def fetch_arxiv(max_results=60):
     )
     r = requests.get(url, timeout=60)
     r.raise_for_status()
-    # Parse Atom
     ns = {"atom": "http://www.w3.org/2005/Atom"}
     root = ET.fromstring(r.text)
     items = []
@@ -74,13 +73,13 @@ def tts(voice_id: str, text: str) -> bytes:
     return r.content
 
 def blurb(p):
-    # Extremely simple first pass; we’ll replace with a nicer summary later
-    first_sent = re.split(r"(?<=[.!?])\s+", p["summary"].strip()).pop(0)
+    # Very simple first pass—later we'll swap in a tighter summarizer
+    first_sent = re.split(r"(?<=[.!?])\s+", p["summary"].strip()).pop(0) if p["summary"].strip() else ""
     return f"{p['title']}. {first_sent} Link available in show notes."
 
 # 1) fetch + filter
 papers = [p for p in fetch_arxiv() if passes_filter(p)]
-papers = papers[:MAX_PAPERS]  # cap for now
+papers = papers[:MAX_PAPERS]  # cap
 
 if not papers:
     papers = [{"title": "No matching papers today",
@@ -115,7 +114,7 @@ subprocess.run([
     "-c","copy", str(episode_mp3)
 ], check=True)
 
-# 4) write simple show notes & RSS
+# 4) write show notes & update index with a player
 notes = ["<ul>"]
 for p in papers:
     notes.append(f'<li><a href="{p["link"]}">{p["title"]}</a></li>')
@@ -124,11 +123,20 @@ notes_html = "\n".join(notes)
 
 index = site / "index.html"
 if index.exists():
-    html = index.read_text(encoding="utf-8").replace(
-        "</main>", f'\n<h3>Latest episode</h3>\n{notes_html}\n</main>'
-    )
+    date_label = datetime.date.today().isoformat()
+    audio_html = f'''
+<div class="episode">
+  <h3>Daily Brief — {date_label}</h3>
+  <p>Rotating voices per paper. Show notes below.</p>
+  <audio controls src="episodes/{episode_mp3.name}"></audio>
+  {notes_html}
+</div>
+'''
+    html = index.read_text(encoding="utf-8")
+    html = html.replace("</main>", f"\n{audio_html}\n</main>")
     index.write_text(html, encoding="utf-8")
 
+# 5) update RSS with the new episode
 now = datetime.datetime.utcnow().strftime("%a, %d %b %Y %H:%M:%S +0000")
 rss = f"""<?xml version="1.0" encoding="UTF-8"?>
 <rss version="2.0" xmlns:itunes="http://www.itunes.com/dtds/podcast-1.0.dtd">
