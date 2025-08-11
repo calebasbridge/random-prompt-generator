@@ -1,6 +1,8 @@
 name: Build & Deploy (Hello Episode)
 
 on:
+  schedule:
+    - cron: "0 11 * * *"
   workflow_dispatch:
   push:
     branches:
