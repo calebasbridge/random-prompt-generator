@@ -1,68 +1,46 @@
-name: caleb
-target_runtime_minutes:
-  min: 13
-  max: 20
-
 include_topics:
-  - corrections
-  - prisons
-  - jails
-  - probation
-  - parole
-  - public safety
-  - risk assessment
-  - evaluation
-  - benchmarks
-  - retrieval
-  - RAG
-  - sensitive data
-  - document AI
-  - speech-to-text
-  - agents
-  - governance
-  - compliance
-  - privacy
-  - PII
-  - red teaming
-  - safety
-  - explainability
-  - audit
-  - monitoring
-  - deployment
-  - policy
-
-conditional_includes:
-  - robotics
-  - computer vision
-  - forensics
-  - contraband detection
-  - facility safety
-  - surveillance auditing
-  - body-worn cameras
-
+- ai and society
+- ai applications
+- ai ethics
+- ai in government
+- ai in justice
+- ai in law enforcement
+- ai in public safety
+- ai policy
+- ai regulation
+- ai risk management
+- algorithmic bias
+- artificial intelligence
+- bias detection
+- decision support
+- explainable ai
+- human-ai collaboration
+- interpretable ai
+- machine learning
+- responsible ai
+- trustworthy ai
 exclude_topics:
-  - pure theory
-  - proofs
-  - satellite imagery
-  - bioinformatics
-  - chemistry-only
-  - astrophysics
-  - synthetic biology
-
-boost_authors:
-  - Ethan Mollick
-  - Conor Grennan
-
-boost_orgs:
-  - Allen Institute for AI
-  - Center for AI Safety
-  - GovAI
-  - Stanford HAI
-  - NIJ
-  - OJP
-  - RAND
-  - NIST
-
+- backpropagation
+- fine tuning
+- fine-tuning
+- gradient descent
+- language model scaling
+- lora
+- medical imaging
+- model compression
+- multimodal transformer
+- neural architecture search
+- optimizer
+- parameter efficient tuning
+- pre-training
+- pretrained model
+- pretraining
+- protein folding
+- quantization
+- scaling laws
+- tokenization
+- training data pipeline
+- transformer architecture
+- transformer optimization
+conditional_includes: []
 max_papers_per_episode: 12
-max_queue_per_day: 30
-voice_rotation: per-paper
