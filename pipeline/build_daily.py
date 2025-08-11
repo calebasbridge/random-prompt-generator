@@ -106,7 +106,12 @@ for i, p in enumerate(clips, 1):
     ], check=True)
     reenc.append(outp)
 
-episode_mp3 = ep_dir / f"episode_{int(time.time())}.mp3"
+# Use epoch as a simple build_id and in filename
+epoch_ts = int(time.time())
+episode_mp3 = ep_dir / f"episode_{epoch_ts}.mp3"
+build_id = str(epoch_ts)
+
+# Concat
 concat_list = ep_dir / "concat.txt"
 concat_list.write_text("\n".join(f"file '{p.name}'" for p in reenc), encoding="utf-8")
 subprocess.run([
@@ -121,12 +126,16 @@ for p in papers:
 notes.append("</ul>")
 notes_html = "\n".join(notes)
 
+# Timestamp in UTC for visibility
+generated_at = datetime.datetime.now(datetime.timezone.utc).strftime("%Y-%m-%d %H:%M UTC")
+
 index = site / "index.html"
 if index.exists():
     date_label = datetime.date.today().isoformat()
     audio_html = f'''
 <div class="episode">
   <h3>Daily Brief — {date_label}</h3>
+  <div class="text-sm" style="opacity:.7">Generated at {generated_at} • build {build_id}</div>
   <p>Rotating voices per paper. Show notes below.</p>
   <audio controls src="episodes/{episode_mp3.name}"></audio>
   {notes_html}
@@ -136,9 +145,20 @@ if index.exists():
     html = html.replace("</main>", f"\n{audio_html}\n</main>")
     index.write_text(html, encoding="utf-8")
 
+# 4b) Write a small JSON so you can verify freshness without opening the page
+(site / "last_build.json").write_text(
+    json.dumps({
+        "build_id": build_id,
+        "generated_at_utc": generated_at,
+        "episode_file": f"episodes/{episode_mp3.name}",
+        "paper_count": len(papers)
+    }, indent=2),
+    encoding="utf-8"
+)
+
 # 5) update RSS with the new episode
-now = datetime.datetime.utcnow().strftime("%a, %d %b %Y %H:%M:%S +0000")
-rss = f"""<?xml version="1.0" encoding="UTF-8"?>
+now_rfc2822 = datetime.datetime.utcnow().strftime("%a, %d %b %Y %H:%M:%S +0000")
+rss = f'''<?xml version="1.0" encoding="UTF-8"?>
 <rss version="2.0" xmlns:itunes="http://www.itunes.com/dtds/podcast-1.0.dtd">
   <channel>
     <title>{TITLE}</title>
@@ -151,13 +171,13 @@ rss = f"""<?xml version="1.0" encoding="UTF-8"?>
 
     <item>
       <title>Daily Brief — {datetime.date.today().isoformat()}</title>
-      <description>Auto-generated episode. Show notes on site.</description>
-      <pubDate>{now}</pubDate>
+      <description>Auto-generated episode. Show notes on site. Generated at {generated_at} (build {build_id}).</description>
+      <pubDate>{now_rfc2822}</pubDate>
       <enclosure url="{SITE_BASE_URL}/episodes/{episode_mp3.name}" length="{episode_mp3.stat().st_size}" type="audio/mpeg"/>
       <guid isPermaLink="false">{episode_mp3.stem}</guid>
     </item>
   </channel>
 </rss>
-"""
+'''
 (site / "podcast.xml").write_text(rss, encoding="utf-8")
-print("Episode built:", episode_mp3)
+print("Episode built:", episode_mp3, "| build_id:", build_id, "| generated_at_utc:", generated_at)
